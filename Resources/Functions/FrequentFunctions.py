@@ -7,13 +7,13 @@ def create_less_frequent_in_column(sequences,index):
     counter_T=0
     selective_charachter=[]
     for j in range(len(sequences)):
-        if(sequences[j].get_Character(index)=="A"):
+        if(sequences[j].get_char(index)=="A"):
             counter_A=counter_A+1
-        elif(sequences[j].get_Character(index)=="C"):
+        elif(sequences[j].get_char(index)=="C"):
             counter_C=counter_C+1
-        elif(sequences[j].get_Character(index)=="G"):
+        elif(sequences[j].get_char(index)=="G"):
             counter_G=counter_G+1
-        elif(sequences[j].get_Character(index)=="T"):
+        elif(sequences[j].get_char(index)=="T"):
             counter_T=counter_T+1
     if(counter_A==min(counter_A,counter_C,counter_G,counter_T)):
         selective_charachter.append("A")

@@ -26,23 +26,18 @@ def GA(sequences,threshold,t,metric,current_time,mutation_rate,population_size):
     print(f'first generation created')
     # Empezamos el ciclo
     while(t.is_alive()):
-        
-        # Se printea por pantalla la generacion actual
-        
-        # Se ordena la generacion actual en base a su calidad
         generation_ordered_by_fitness=fitness(sequences,current_generation,metric)
-
+        #print the quality of the best agent int the current generation
+        print(f'best agent in generation {i}: {uf.answer_Quality(sequences,generation_ordered_by_fitness[0],metric)}')
         #Revisamos si la mejor respuesta de la generacion actual es mejor que la mejor respuesta
+       
         if(uf.answer_Quality(sequences,generation_ordered_by_fitness[0],metric)>best_quality):
-            
             # Se guarda la mejor respuesta anterior en la lista de la primera generacion
             first_generation[random.randint(0,population_size-1)]=best_agent
-            
             # Se actualiza la mejor respuesta con su calidad y tiempo
             best_agent=generation_ordered_by_fitness[0]
             best_quality=uf.answer_Quality(sequences,best_agent,metric)
             best_time_found=time.time()-current_time
-            
             #print the quality of the best agent found and the time it took to find it
             print(f'best agent found: {best_quality} in {best_time_found} seconds')
         
@@ -65,17 +60,26 @@ def GA(sequences,threshold,t,metric,current_time,mutation_rate,population_size):
             # Reiniciamos el contador
             cont_same=0
         
+        # Se actualiza el mejor de la generacion anterior
+        last_gen_best=uf.answer_Quality(sequences,generation_ordered_by_fitness[0],metric)
+
         #Se crea la nueva generacion utilizando crossover
         new_generation=crossover(generation_ordered_by_fitness)
         
         #Se mutan las respuestas de la nueva generacion
         new_generation=mutation(new_generation,mutation_rate,threshold)
-        
-        # Se actualiza el mejor de la generacion anterior
-        last_gen_best=uf.answer_Quality(sequences,generation_ordered_by_fitness[0],metric)
-        
+        current_generation=fitness(sequences,new_generation,metric)
+
+        for j in range(2):
+            #print the quality of the current agent
+            print(f'quality of agent {j}: {uf.answer_Quality(sequences,current_generation[j],metric)}')
+            improved_agent=lsf.localSearchPhase(sequences,current_generation[j],metric)
+            #print the quality of the improved agent
+            print(f'quality of improved agent {j}: {uf.answer_Quality(sequences,improved_agent,metric)}')
+            if(uf.answer_Quality(sequences,improved_agent,metric)>uf.answer_Quality(sequences,current_generation[j],metric)):
+                current_generation[population_size-1-j]=improved_agent
+        current_generation=fitness(sequences,current_generation,metric)
         #La nueva generacion se convierte en la generacion actual
-        current_generation=new_generation
         i+=1
     return best_agent,best_quality,best_time_found
 
